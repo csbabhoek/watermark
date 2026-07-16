@@ -1,0 +1,1175 @@
+/* ======================================================
+   EXIF Watermark Studio — Design tokens
+   ====================================================== */
+:root {
+  /* Color */
+  --bg: #16181a;
+  --bg-raised: #1e2120;
+  --panel: #efebe2;
+  --panel-line: #c9c3b4;
+  --ink: #1c1d1b;
+  --ink-soft: #6b6f66;
+  --paper-ink: #1c1d1b;
+  --line: #33362f;
+  --accent: #e7b23b;
+  --accent-ink: #201802;
+  --sage: #6b7d6b;
+  --danger: #c0654f;
+
+  /* Type */
+  --font-display: "Big Shoulders Condensed", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Layout */
+  --radius: 2px;
+  --gap: 1rem;
+  --header-h: 3.75rem;
+  --export-h: 4.25rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: #ece9e1;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  padding-top: var(--header-h);
+  padding-bottom: var(--export-h);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ======================================================
+   Header — "equipment plate"
+   ====================================================== */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  z-index: 10;
+}
+
+.plate {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.plate__mark {
+  font-size: 1.4rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.plate__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.plate__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+
+.plate__subtitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.plate__readout {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 480px) {
+  .plate__readout {
+    display: block;
+  }
+}
+
+/* ======================================================
+   Main layout — mobile-first single column
+   ====================================================== */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.25rem 1rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+/* ======================================================
+   Preview — viewfinder
+   ====================================================== */
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.viewfinder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.viewfinder.has-image {
+  background: #000;
+}
+
+.viewfinder.is-dragover {
+  border-color: var(--accent);
+  background: rgba(231, 178, 59, 0.08);
+}
+
+.viewfinder__drop-label {
+  display: none;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.viewfinder.is-dragover .viewfinder__drop-label {
+  display: block;
+}
+
+.viewfinder.is-dragover .preview__empty,
+.viewfinder.is-dragover .preview__image {
+  opacity: 0.25;
+}
+
+.corner {
+  position: absolute;
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 2px solid var(--accent);
+  opacity: 0.85;
+}
+
+.corner--tl {
+  top: 0.6rem;
+  left: 0.6rem;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner--tr {
+  top: 0.6rem;
+  right: 0.6rem;
+  border-left: none;
+  border-bottom: none;
+}
+
+.corner--bl {
+  bottom: 0.6rem;
+  left: 0.6rem;
+  border-right: none;
+  border-top: none;
+}
+
+.corner--br {
+  bottom: 0.6rem;
+  right: 0.6rem;
+  border-left: none;
+  border-top: none;
+}
+
+.preview__empty {
+  text-align: center;
+  padding: 1rem;
+}
+
+.preview__empty-title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  margin: 0 0 0.35rem;
+}
+
+.preview__empty-hint {
+  font-size: 0.85rem;
+  color: #8b8d86;
+  margin: 0;
+}
+
+.preview__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ======================================================
+   EXIF Watermark Plate — sits below the image
+   ====================================================== */
+.wm-plate {
+  display: flex;
+  align-items: stretch;
+  gap: 0.85rem;
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--panel-line);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.9rem;
+}
+
+.wm-plate[hidden] {
+  display: none;
+}
+
+.wm-plate__logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  flex: 0 0 auto;
+  min-width: 2.75rem;
+}
+
+.wm-plate__ring {
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.wm-plate__ring::after {
+  content: "";
+  position: absolute;
+  inset: 32%;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.wm-plate__custom-logo-chip {
+  width: 1.7rem;
+  height: 1.7rem;
+  flex: 0 0 auto;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.wm-plate__custom-logo {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.wm-plate__brand {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: center;
+  max-width: 5.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wm-plate__divider {
+  align-self: stretch;
+  width: 1px;
+  background: var(--panel-line);
+  flex: 0 0 auto;
+}
+
+.wm-plate__id {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1 1 40%;
+}
+
+.wm-plate__model {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wm-plate__lens {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wm-plate__specs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1 1 40%;
+  text-align: right;
+}
+
+.wm-plate__spec-row {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.wm-plate__meta-row {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+@media (max-width: 420px) {
+  .wm-plate {
+    flex-wrap: wrap;
+    row-gap: 0.6rem;
+  }
+
+  .wm-plate__divider {
+    display: none;
+  }
+
+  .wm-plate__id,
+  .wm-plate__specs {
+    flex: 1 1 100%;
+  }
+
+  .wm-plate__specs {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+/* ------------------------------------------------------
+   Templates — each restyles the same plate markup
+   ------------------------------------------------------ */
+
+/* Hasselblad — warm cream plate, medium-format precision (default look) */
+.wm-plate[data-template="hasselblad"] .wm-plate__model {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Canon — clean white plate, signature red accent */
+.wm-plate[data-template="canon"] {
+  background: #ffffff;
+  border-color: #e2e2e2;
+  border-top-color: #c8102e;
+}
+
+.wm-plate[data-template="canon"] .wm-plate__ring {
+  border-color: #c8102e;
+}
+
+.wm-plate[data-template="canon"] .wm-plate__ring::after {
+  background: #c8102e;
+}
+
+.wm-plate[data-template="canon"] .wm-plate__divider {
+  background: #e2e2e2;
+}
+
+.wm-plate[data-template="canon"] .wm-plate__model {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: #141414;
+}
+
+.wm-plate[data-template="canon"] .wm-plate__spec-row {
+  color: #141414;
+  font-weight: 600;
+}
+
+/* Leica — black plate, red dot mark, rangefinder minimalism */
+.wm-plate[data-template="leica"] {
+  background: #111110;
+  border-color: #2c2c2a;
+  border-top-color: #e2001a;
+}
+
+.wm-plate[data-template="leica"] .wm-plate__ring {
+  border-color: #e2001a;
+}
+
+.wm-plate[data-template="leica"] .wm-plate__ring::after {
+  background: #e2001a;
+}
+
+.wm-plate[data-template="leica"] .wm-plate__brand {
+  color: #a39d90;
+}
+
+.wm-plate[data-template="leica"] .wm-plate__divider {
+  background: #3a3a38;
+}
+
+.wm-plate[data-template="leica"] .wm-plate__model {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: #f2efe6;
+}
+
+.wm-plate[data-template="leica"] .wm-plate__lens,
+.wm-plate[data-template="leica"] .wm-plate__meta-row {
+  color: #a39d90;
+}
+
+.wm-plate[data-template="leica"] .wm-plate__spec-row {
+  color: #f2efe6;
+}
+
+/* Minimal — no logo, no dividers, no color, just text */
+.wm-plate[data-template="minimal"] {
+  background: #ffffff;
+  border-color: #e6e6e6;
+  border-top-color: #e6e6e6;
+  border-top-width: 1px;
+}
+
+.wm-plate[data-template="minimal"] .wm-plate__logo,
+.wm-plate[data-template="minimal"] .wm-plate__divider {
+  display: none;
+}
+
+.wm-plate[data-template="minimal"] .wm-plate__model {
+  font-family: var(--font-body);
+  font-weight: 500;
+  color: #1c1d1b;
+}
+
+.wm-plate[data-template="minimal"] .wm-plate__lens,
+.wm-plate[data-template="minimal"] .wm-plate__meta-row {
+  color: #8b8d86;
+}
+
+.wm-plate[data-template="minimal"] .wm-plate__spec-row {
+  font-weight: 400;
+  color: #1c1d1b;
+}
+
+/* Nikon — black plate, signature yellow accent */
+.wm-plate[data-template="nikon"] {
+  background: #111111;
+  border-color: #2b2b2b;
+  border-top-color: #ffe100;
+}
+
+.wm-plate[data-template="nikon"] .wm-plate__ring {
+  border-color: #ffe100;
+}
+
+.wm-plate[data-template="nikon"] .wm-plate__ring::after {
+  background: #ffe100;
+}
+
+.wm-plate[data-template="nikon"] .wm-plate__brand {
+  color: #a6a6a6;
+}
+
+.wm-plate[data-template="nikon"] .wm-plate__divider {
+  background: #333333;
+}
+
+.wm-plate[data-template="nikon"] .wm-plate__model {
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.wm-plate[data-template="nikon"] .wm-plate__lens,
+.wm-plate[data-template="nikon"] .wm-plate__meta-row {
+  color: #a6a6a6;
+}
+
+.wm-plate[data-template="nikon"] .wm-plate__spec-row {
+  color: #ffe100;
+  font-weight: 600;
+}
+
+/* Sony — clean white plate, black wordmark (matches OSD overlay) */
+.wm-plate[data-template="sony"] {
+  background: #ffffff;
+  border-color: #e2e2e2;
+  border-top-color: #e2e2e2;
+  border-top-width: 1px;
+}
+
+.wm-plate[data-template="sony"] .wm-plate__ring {
+  border-color: #141414;
+}
+
+.wm-plate[data-template="sony"] .wm-plate__ring::after {
+  background: #141414;
+}
+
+.wm-plate[data-template="sony"] .wm-plate__brand {
+  color: #6b6f66;
+}
+
+.wm-plate[data-template="sony"] .wm-plate__divider {
+  background: #e2e2e2;
+}
+
+.wm-plate[data-template="sony"] .wm-plate__model {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #141414;
+}
+
+.wm-plate[data-template="sony"] .wm-plate__lens,
+.wm-plate[data-template="sony"] .wm-plate__meta-row {
+  color: #6b6f66;
+}
+
+.wm-plate[data-template="sony"] .wm-plate__spec-row {
+  color: #141414;
+  font-weight: 600;
+}
+
+/* Fujifilm — light film stock plate, authentic FUJIFILM red */
+.wm-plate[data-template="fujifilm"] {
+  background: #f4f2ea;
+  border-color: #d8d3c2;
+  border-top-color: #c8151c;
+}
+
+.wm-plate[data-template="fujifilm"] .wm-plate__ring {
+  border-color: #c8151c;
+}
+
+.wm-plate[data-template="fujifilm"] .wm-plate__ring::after {
+  background: #c8151c;
+}
+
+.wm-plate[data-template="fujifilm"] .wm-plate__divider {
+  background: #d8d3c2;
+}
+
+.wm-plate[data-template="fujifilm"] .wm-plate__model {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #1c2a20;
+}
+
+.wm-plate[data-template="fujifilm"] .wm-plate__spec-row {
+  color: #1c2a20;
+  font-weight: 600;
+}
+
+/* GoPro — bold adventure black plate, vivid orange accent */
+.wm-plate[data-template="gopro"] {
+  background: #0d0d0d;
+  border-color: #262626;
+  border-top-color: #ff5c00;
+  border-top-width: 4px;
+}
+
+.wm-plate[data-template="gopro"] .wm-plate__ring {
+  border-color: #ff5c00;
+}
+
+.wm-plate[data-template="gopro"] .wm-plate__ring::after {
+  background: #ff5c00;
+}
+
+.wm-plate[data-template="gopro"] .wm-plate__brand {
+  color: #b3b3b3;
+}
+
+.wm-plate[data-template="gopro"] .wm-plate__divider {
+  background: #333333;
+}
+
+.wm-plate[data-template="gopro"] .wm-plate__model {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+}
+
+.wm-plate[data-template="gopro"] .wm-plate__lens,
+.wm-plate[data-template="gopro"] .wm-plate__meta-row {
+  color: #b3b3b3;
+}
+
+.wm-plate[data-template="gopro"] .wm-plate__spec-row {
+  color: #ff5c00;
+  font-weight: 700;
+}
+
+/* Dark Mode — neutral dark plate for a general low-light look */
+.wm-plate[data-template="dark"] {
+  background: #1a1a1c;
+  border-color: #2f2f32;
+  border-top-color: #8f8f96;
+}
+
+.wm-plate[data-template="dark"] .wm-plate__ring {
+  border-color: #c9c9cf;
+}
+
+.wm-plate[data-template="dark"] .wm-plate__ring::after {
+  background: #c9c9cf;
+}
+
+.wm-plate[data-template="dark"] .wm-plate__brand {
+  color: #8f8f96;
+}
+
+.wm-plate[data-template="dark"] .wm-plate__divider {
+  background: #33333a;
+}
+
+.wm-plate[data-template="dark"] .wm-plate__model {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: #f2f2f2;
+}
+
+.wm-plate[data-template="dark"] .wm-plate__lens,
+.wm-plate[data-template="dark"] .wm-plate__meta-row {
+  color: #8f8f96;
+}
+
+.wm-plate[data-template="dark"] .wm-plate__spec-row {
+  color: #f2f2f2;
+  font-weight: 500;
+}
+
+/* ======================================================
+   Buttons
+   ====================================================== */
+.btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius);
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn--upload {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.btn--upload:hover {
+  background: rgba(231, 178, 59, 0.1);
+}
+
+.btn--export {
+  flex: 1 1 0;
+  width: 100%;
+  padding: 0.95rem 1rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn--export:disabled {
+  background: var(--line);
+  color: #75786f;
+  cursor: not-allowed;
+}
+
+.btn--batch {
+  margin-top: 0.5rem;
+}
+
+.offline-banner {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+
+/* ======================================================
+   Batch panel
+   ====================================================== */
+.batch-panel {
+  background: var(--panel);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  margin-top: 1rem;
+}
+
+.batch-panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--panel-line);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.batch-panel__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+.batch-panel__clear {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.batch-panel__clear:hover {
+  color: var(--ink);
+}
+
+.batch-panel__hint {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin: 0 0 0.8rem;
+}
+
+.batch-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  contain: content;
+}
+
+.batch-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.batch-item__thumb {
+  width: 2.4rem;
+  height: 2.4rem;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-line);
+  flex-shrink: 0;
+}
+
+.batch-item__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.batch-item__status {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+
+.batch-item__status.is-done {
+  color: #3f7d3f;
+}
+
+.batch-item__status.is-error {
+  color: #b3392c;
+}
+
+.batch-item__remove {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.batch-item__remove:hover {
+  color: var(--ink);
+}
+
+.batch-panel__actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.batch-panel__progress {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin: 0.6rem 0 0;
+}
+
+/* ======================================================
+   Editor panel — light "light table" surface
+   ====================================================== */
+.editor {
+  background: var(--panel);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+}
+
+.editor__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--panel-line);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.editor__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+.editor__status {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.editor__empty {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin: 0 0 1rem;
+}
+
+.meta-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.meta-form__hint {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin: -0.3rem 0 0.2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.field label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.field input {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.6rem;
+  width: 100%;
+}
+
+.field input::placeholder {
+  color: #b7b1a0;
+}
+
+#signature {
+  font-style: italic;
+}
+
+.template-field {
+  gap: 0.5rem;
+}
+
+.template-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.template-swatch {
+  appearance: none;
+  cursor: pointer;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+}
+
+.template-swatch:hover {
+  border-color: var(--sage);
+}
+
+.template-swatch.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #efebe2;
+}
+
+.logo-upload-field {
+  gap: 0.5rem;
+}
+
+.logo-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logo-upload__preview {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  object-fit: contain;
+  background: #ffffff;
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  padding: 0.2rem;
+}
+
+.btn--logo {
+  width: auto;
+  flex: 0 0 auto;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.78rem;
+}
+
+.logo-upload__remove {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  flex: 0 0 auto;
+}
+
+.logo-upload__remove:hover {
+  color: var(--ink);
+}
+
+.logo-upload__hint {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.field input:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 1px;
+  border-color: var(--sage);
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+@media (min-width: 480px) {
+  .field-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ======================================================
+   Export bar — sticky footer
+   ====================================================== */
+.export-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--export-h);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  z-index: 10;
+}
+
+@media (max-width: 380px) {
+  .export-bar {
+    gap: 0.4rem;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+  }
+
+  .btn--export {
+    padding: 0.8rem 0.4rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* ======================================================
+   Tablet / desktop — two-column layout
+   ====================================================== */
+@media (min-width: 768px) {
+  .app {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: start;
+    padding: 2rem 1.5rem;
+  }
+
+  .viewfinder {
+    aspect-ratio: 1 / 1;
+  }
+
+  .editor {
+    padding: 1.5rem;
+  }
+
+  .export-bar {
+    padding-left: calc((100vw - 72rem) / 2 + 1.5rem);
+    padding-right: calc((100vw - 72rem) / 2 + 1.5rem);
+  }
+
+  .btn--export {
+    max-width: 9rem;
+    margin-left: auto;
+  }
+}

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>EXIF Watermark Studio</title>
+  <meta name="description" content="Add EXIF-style metadata watermarks to your photos." />
+  <meta name="theme-color" content="#16181A" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="EXIF Studio" />
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Condensed:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <div class="plate">
+      <span class="plate__mark" aria-hidden="true">◎</span>
+      <div class="plate__text">
+        <span class="plate__title">EXIF WATERMARK</span>
+        <span class="plate__subtitle">STUDIO</span>
+      </div>
+    </div>
+    <div class="plate__readout" aria-hidden="true">f/2.8&nbsp;&nbsp;·&nbsp;&nbsp;ISO 100</div>
+  </header>
+
+  <p class="offline-banner" id="offlineBanner" role="status" aria-live="polite" hidden>
+    Offline — working from cached version
+  </p>
+
+  <main class="app">
+
+    <!-- ============ IMAGE PREVIEW ============ -->
+    <section class="preview" aria-label="Image preview">
+      <div class="viewfinder">
+        <span class="corner corner--tl" aria-hidden="true"></span>
+        <span class="corner corner--tr" aria-hidden="true"></span>
+        <span class="corner corner--bl" aria-hidden="true"></span>
+        <span class="corner corner--br" aria-hidden="true"></span>
+
+        <div class="preview__empty">
+          <p class="preview__empty-title">NO FILE LOADED</p>
+          <p class="preview__empty-hint">Drag &amp; drop a photo, or use the button below</p>
+        </div>
+        <p class="viewfinder__drop-label" aria-hidden="true">Release to drop</p>
+
+        <img class="preview__image" src="" alt="" decoding="async" hidden />
+      </div>
+
+      <!-- ============ EXIF WATERMARK PLATE (below image) ============ -->
+      <div class="wm-plate" id="wmPlate" hidden>
+        <div class="wm-plate__logo">
+          <span class="wm-plate__ring" aria-hidden="true"></span>
+          <span class="wm-plate__brand" id="wmBrand">—</span>
+        </div>
+
+        <span class="wm-plate__divider" aria-hidden="true"></span>
+
+        <div class="wm-plate__id">
+          <span class="wm-plate__model" id="wmModel">—</span>
+          <span class="wm-plate__lens" id="wmLens">—</span>
+        </div>
+
+        <span class="wm-plate__divider" aria-hidden="true"></span>
+
+        <div class="wm-plate__specs">
+          <span class="wm-plate__spec-row" id="wmSpecs">—</span>
+          <span class="wm-plate__meta-row" id="wmMeta">—</span>
+        </div>
+      </div>
+
+      <!-- ============ UPLOAD BUTTON ============ -->
+      <button type="button" class="btn btn--upload" id="uploadBtn">
+        Upload Photo
+      </button>
+      <button type="button" class="btn btn--upload btn--batch" id="batchAddBtn">
+        Add Photos (Batch)
+      </button>
+      <input type="file" id="fileInput" accept="image/*" hidden />
+      <input type="file" id="batchFileInput" accept="image/*" multiple hidden />
+      <p class="sr-only" id="uploadAnnouncer" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ============ BATCH PANEL ============ -->
+    <section class="batch-panel" id="batchPanel" aria-label="Batch processing" hidden>
+      <div class="batch-panel__header">
+        <h2 class="batch-panel__title">Batch <span id="batchCount">0</span></h2>
+        <button type="button" class="batch-panel__clear" id="batchClearBtn">Clear</button>
+      </div>
+      <p class="batch-panel__hint">
+        Applies the current template, logo setting, photographer and signature to every photo. Camera specs are read from each photo's own EXIF data.
+      </p>
+      <ul class="batch-list" id="batchList"></ul>
+      <div class="batch-panel__actions">
+        <button type="button" class="btn btn--export" id="batchExportZipBtn" disabled>
+          Export All as ZIP
+        </button>
+      </div>
+      <p class="batch-panel__progress" id="batchProgress" aria-live="polite"></p>
+    </section>
+
+    <!-- ============ EDITOR PANEL ============ -->
+    <section class="editor" aria-label="Watermark editor">
+      <div class="editor__header">
+        <h2 class="editor__title">Editor</h2>
+        <span class="editor__status" aria-live="polite">—</span>
+      </div>
+
+      <div class="editor__body">
+        <p class="editor__empty" id="editorEmpty">
+          Upload a photo to read and edit its metadata.
+        </p>
+
+        <form class="meta-form" id="metaForm" hidden>
+          <p class="meta-form__hint">
+            Read automatically from the file. Edit any field — the watermark on the photo updates as you type.
+          </p>
+
+          <div class="field template-field">
+            <label id="templatePickerLabel">Template</label>
+            <div class="template-picker" id="templatePicker" role="radiogroup" aria-labelledby="templatePickerLabel">
+              <button type="button" class="template-swatch is-active" data-template="hasselblad" role="radio" aria-checked="true">Hasselblad</button>
+              <button type="button" class="template-swatch" data-template="canon" role="radio" aria-checked="false">Canon</button>
+              <button type="button" class="template-swatch" data-template="nikon" role="radio" aria-checked="false">Nikon</button>
+              <button type="button" class="template-swatch" data-template="sony" role="radio" aria-checked="false">Sony</button>
+              <button type="button" class="template-swatch" data-template="leica" role="radio" aria-checked="false">Leica</button>
+              <button type="button" class="template-swatch" data-template="fujifilm" role="radio" aria-checked="false">Fujifilm</button>
+              <button type="button" class="template-swatch" data-template="gopro" role="radio" aria-checked="false">GoPro</button>
+              <button type="button" class="template-swatch" data-template="dark" role="radio" aria-checked="false">Dark Mode</button>
+              <button type="button" class="template-swatch" data-template="minimal" role="radio" aria-checked="false">Minimal</button>
+            </div>
+          </div>
+
+          <div class="field logo-upload-field">
+            <label id="customLogoLabel">Custom Logo (PNG)</label>
+            <div class="logo-upload" role="group" aria-labelledby="customLogoLabel">
+              <img class="logo-upload__preview" id="customLogoPreview" alt="" hidden />
+              <button type="button" class="btn btn--upload btn--logo" id="customLogoBtn">Upload Logo</button>
+              <button type="button" class="logo-upload__remove" id="customLogoRemoveBtn" hidden>Remove</button>
+            </div>
+            <input type="file" id="customLogoInput" accept="image/png" hidden />
+            <p class="logo-upload__hint">PNG with transparent background works best. Auto-fitted to the logo slot.</p>
+          </div>
+
+          <div class="field">
+            <label for="cameraBrand">Camera Brand</label>
+            <input type="text" id="cameraBrand" name="cameraBrand" autocomplete="off" placeholder="—" />
+          </div>
+
+          <div class="field">
+            <label for="cameraModel">Camera Model</label>
+            <input type="text" id="cameraModel" name="cameraModel" autocomplete="off" placeholder="—" />
+          </div>
+
+          <div class="field">
+            <label for="lens">Lens</label>
+            <input type="text" id="lens" name="lens" autocomplete="off" placeholder="—" />
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="aperture">Aperture</label>
+              <input type="text" id="aperture" name="aperture" autocomplete="off" placeholder="—" />
+            </div>
+
+            <div class="field">
+              <label for="shutterSpeed">Shutter Speed</label>
+              <input type="text" id="shutterSpeed" name="shutterSpeed" autocomplete="off" placeholder="—" />
+            </div>
+
+            <div class="field">
+              <label for="iso">ISO</label>
+              <input type="text" id="iso" name="iso" autocomplete="off" placeholder="—" />
+            </div>
+
+            <div class="field">
+              <label for="focalLength">Focal Length</label>
+              <input type="text" id="focalLength" name="focalLength" autocomplete="off" placeholder="—" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="date">Date</label>
+            <input type="text" id="date" name="date" autocomplete="off" placeholder="—" />
+          </div>
+
+          <div class="field">
+            <label for="photographer">Photographer</label>
+            <input type="text" id="photographer" name="photographer" autocomplete="off" placeholder="—" />
+          </div>
+
+          <div class="field">
+            <label for="signature">Signature</label>
+            <input type="text" id="signature" name="signature" autocomplete="off" placeholder="—" />
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ EXPORT BAR ============ -->
+  <footer class="export-bar">
+    <button type="button" class="btn btn--export" id="exportPngBtn" disabled>
+      Export PNG
+    </button>
+    <button type="button" class="btn btn--export" id="exportJpegBtn" disabled>
+      Export JPEG
+    </button>
+    <button type="button" class="btn btn--export" id="exportZipBtn" disabled>
+      Export ZIP
+    </button>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.js" defer></script>
+  <script src="script.js" defer></script>
+</body>
+</html>
